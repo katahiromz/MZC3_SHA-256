@@ -3,7 +3,7 @@
 // This file is part of MZC3.  See file "ReadMe.txt" and "License.txt".
 ////////////////////////////////////////////////////////////////////////////
 
-#include "stdafx.h"
+#include "SHA-256.hpp"
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -210,6 +210,25 @@ void MSha256::GetHashBinary(void *p32bytes) {
     #include <fstream>
     #include <string>
 
+    void print_binary(const void *p, size_t size)
+    {
+        static const char *s_hex = "0123456789abcdef";
+        const BYTE *pb = reinterpret_cast<const BYTE *>(p);
+        std::cout << "{";
+        while (size--)
+        {
+            BYTE b = *pb;
+            std::cout << "0x" << s_hex[b >> 4] << s_hex[b & 0xF] << ", ";
+            ++pb;
+        }
+        std::cout << "}" << std::endl;
+    }
+
+    void print_binary(const char *psz)
+    {
+        print_binary(psz, ::lstrlenA(psz));
+    }
+
     int main(int argc, char **argv) {
         std::string str;
 
@@ -217,6 +236,9 @@ void MSha256::GetHashBinary(void *p32bytes) {
             // string specified at command line
             MzcGetSha256HexString(str, argv[2]);
             std::cout << str << std::endl;
+            char binary[32];
+            MzcGetSha256Binary(binary, argv[2]);
+            print_binary(binary, 32);
         }
         else if (argc < 2) {
             // interactive mode
@@ -229,6 +251,9 @@ void MSha256::GetHashBinary(void *p32bytes) {
                     break;
                 MzcGetSha256HexString(str, line.c_str());
                 std::cout << str << std::endl;
+                char binary[32];
+                MzcGetSha256Binary(binary, line.c_str());
+                print_binary(binary, 32);
             }
         }
         else if (argc == 2) {
@@ -244,6 +269,9 @@ void MSha256::GetHashBinary(void *p32bytes) {
                 }
                 sha256.GetHashHexString(str);
                 std::cout << str << std::endl;
+                char binary[32];
+                sha256.GetHashBinary(binary);
+                print_binary(binary, 32);
             }
             else {
                 std::cerr << "ERROR: cannot open file '" <<

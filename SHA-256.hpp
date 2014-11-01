@@ -11,6 +11,9 @@
 #ifndef __MZC3_SHA_256_HPP__
 #define __MZC3_SHA_256_HPP__
 
+#include <cstring>
+#include <cassert>
+
 ////////////////////////////////////////////////////////////////////////////
 // little endian or big endian?
 
@@ -108,7 +111,6 @@ protected:
 ////////////////////////////////////////////////////////////////////////////
 // MzcGetSha256Binary and MzcGetSha256HexString
 
-template <typename T_STRING>
 inline void MzcGetSha256Binary(
     void *p32bytes, const void *ptr, SHA256_DWORD len)
 {
@@ -116,6 +118,13 @@ inline void MzcGetSha256Binary(
     MSha256 sha256;
     sha256.AddData(ptr, len);
     sha256.GetHashBinary(p32bytes);
+}
+
+inline void MzcGetSha256Binary(
+    void *p32bytes, const char *psz)
+{
+    using namespace std;
+    MzcGetSha256Binary(p32bytes, psz, strlen(psz));
 }
 
 template <typename T_STRING>
