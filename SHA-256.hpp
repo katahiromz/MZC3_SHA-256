@@ -11,8 +11,9 @@
 #ifndef __MZC3_SHA_256_HPP__
 #define __MZC3_SHA_256_HPP__
 
-#include <cstring>
-#include <cassert>
+#include <cstring>      // for strlen
+#include <cassert>      // for assert
+#include <iterator>     // for std::distance
 
 ////////////////////////////////////////////////////////////////////////////
 // little endian or big endian?
