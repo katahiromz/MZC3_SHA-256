@@ -210,13 +210,11 @@ void MSha256::GetHashBinary(void *p32bytes) {
     #include <fstream>
     #include <string>
 
-    void print_binary(const void *p, size_t size)
-    {
+    void print_binary(const void *p, size_t size) {
         static const char *s_hex = "0123456789abcdef";
         const BYTE *pb = reinterpret_cast<const BYTE *>(p);
         std::cout << "{";
-        while (size--)
-        {
+        while (size--) {
             BYTE b = *pb;
             std::cout << "0x" << s_hex[b >> 4] << s_hex[b & 0xF] << ", ";
             ++pb;
@@ -224,64 +222,33 @@ void MSha256::GetHashBinary(void *p32bytes) {
         std::cout << "}" << std::endl;
     }
 
-    void print_binary(const char *psz)
-    {
+    void print_binary(const char *psz) {
         print_binary(psz, ::lstrlenA(psz));
     }
 
-    int main(int argc, char **argv) {
-        std::string str;
+    int main(void) {
+        // interactive mode
+        std::string salt, line;
+        std::cout << "Enter 'exit' to exit." << std::endl;
 
-        if (argc == 3 && strcmp(argv[1], "-s") == 0) {
-            // string specified at command line
-            MzcGetSha256HexString(str, argv[2]);
-            std::cout << str << std::endl;
+        std::cout << "Enter salt string: ";
+        std::getline(std::cin, salt);
+        if (salt == "exit" || salt == "quit")
+            return 0;
+
+        std::string result;
+        for (;;) {
+            std::cout << "Enter password: ";
+            std::getline(std::cin, line);
+            if (line == "exit" || line == "quit")
+                break;
+
+            MzcGetSha256HexString(result, line.c_str(), salt.c_str());
+            std::cout << result << std::endl;
+
             char binary[32];
-            MzcGetSha256Binary(binary, argv[2]);
+            MzcGetSha256Binary(binary, line.c_str(), salt.c_str());
             print_binary(binary, 32);
-        }
-        else if (argc < 2) {
-            // interactive mode
-            std::string line;
-            std::cout << "Enter 'exit' to exit." << std::endl;
-            for (;;) {
-                std::cout << "SHA-256> ";
-                std::getline(std::cin, line);
-                if (line == "exit" || line == "quit")
-                    break;
-                MzcGetSha256HexString(str, line.c_str());
-                std::cout << str << std::endl;
-                char binary[32];
-                MzcGetSha256Binary(binary, line.c_str());
-                print_binary(binary, 32);
-            }
-        }
-        else if (argc == 2) {
-            // file input mode
-            char buf[1024];
-            std::fstream inf(argv[1], std::ios::in | std::ios::binary);
-            if (inf.is_open()) {
-                MSha256 sha256;
-                std::streamsize ret;
-                while ((ret = inf.readsome(buf, 1024)) != 0)
-                {
-                    sha256.AddData(buf, ret);
-                }
-                sha256.GetHashHexString(str);
-                std::cout << str << std::endl;
-                char binary[32];
-                sha256.GetHashBinary(binary);
-                print_binary(binary, 32);
-            }
-            else {
-                std::cerr << "ERROR: cannot open file '" <<
-                             argv[1] << "'." << std::endl;
-            }
-        }
-        else {
-            // show usage
-            std::cerr << "Usage: SHA-256 [-s string | file]" << std::endl;
-            return 1;
         }
 
         return 0;

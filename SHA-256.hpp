@@ -77,6 +77,12 @@ class MSha256
 {
 public:
     MSha256() { Init(); }
+    MSha256(const char *salt) {
+        using namespace std;
+        assert(salt);
+        Init();
+        AddData(salt, strlen(salt));
+    }
 
     // The control order:
     // Init() --> AddData() --> GetHashBinary() or GetHashHexString()
@@ -113,46 +119,53 @@ protected:
 // MzcGetSha256Binary and MzcGetSha256HexString
 
 inline void MzcGetSha256Binary(
-    void *p32bytes, const void *ptr, SHA256_DWORD len)
+    void *p32bytes, const void *ptr, SHA256_DWORD len,
+    const char *salt = "")
 {
     assert(ptr || len == 0);
-    MSha256 sha256;
+    MSha256 sha256(salt);
     sha256.AddData(ptr, len);
     sha256.GetHashBinary(p32bytes);
 }
 
 inline void MzcGetSha256Binary(
-    void *p32bytes, const char *psz)
+    void *p32bytes, const char *psz, const char *salt = "")
 {
     using namespace std;
-    MzcGetSha256Binary(p32bytes, psz, strlen(psz));
+    MzcGetSha256Binary(p32bytes, psz, strlen(psz), salt);
 }
 
 template <typename T_STRING>
 inline void MzcGetSha256HexString(
-    T_STRING& str, const void *ptr, SHA256_DWORD len)
+    T_STRING& str, const void *ptr, SHA256_DWORD len,
+    const char *salt = "")
 {
     assert(ptr || len == 0);
-    MSha256 sha256;
+    MSha256 sha256(salt);
     sha256.AddData(ptr, len);
     sha256.GetHashHexString(str);
 }
 
 template <typename T_STRING, typename T_ITER>
 inline void MzcGetSha256HexString(
-    T_STRING& str, T_ITER begin_, T_ITER end_)
+    T_STRING& str, T_ITER begin_, T_ITER end_, const char *salt)
 {
-    MSha256 sha256;
+    assert(salt);
+    MSha256 sha256(salt);
     sha256.AddData(begin_, end_);
     sha256.GetHashHexString(str);
 }
 
 template <typename T_STRING>
-inline void MzcGetSha256HexString(T_STRING& str, const char *psz) {
-    assert(psz);
+inline void
+MzcGetSha256HexString(
+    T_STRING& str, const char *psz, const char *salt = "")
+{
     using namespace std;
+    assert(psz);
     SHA256_DWORD len = static_cast<SHA256_DWORD>(strlen(psz));
-    MSha256 sha256;
+    MSha256 sha256(salt);
+    sha256.AddData(salt, strlen(salt));
     sha256.AddData(psz, len);
     sha256.GetHashHexString(str);
 }
