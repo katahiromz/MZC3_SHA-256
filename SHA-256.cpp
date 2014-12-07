@@ -205,7 +205,7 @@ void MSha256::GetHashBinary(void *p32bytes) {
 ////////////////////////////////////////////////////////////////////////////
 // test and sample
 
-#ifdef UNITTEST
+#ifdef SHA256_UNITTEST
     #include <iostream>
     #include <fstream>
     #include <string>
@@ -253,6 +253,6 @@ void MSha256::GetHashBinary(void *p32bytes) {
 
         return 0;
     }
-#endif  // def UNITTEST
+#endif  // def SHA256_UNITTEST
 
 ////////////////////////////////////////////////////////////////////////////
