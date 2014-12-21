@@ -243,11 +243,11 @@ void MSha256::GetHashBinary(void *p32bytes) {
             if (line == "exit" || line == "quit")
                 break;
 
-            MzcGetSha256HexString(result, line.c_str(), salt.c_str());
+            MzcGetSha256HexString(result, line.data(), salt.data());
             std::cout << result << std::endl;
 
             char binary[32];
-            MzcGetSha256Binary(binary, line.c_str(), salt.c_str());
+            MzcGetSha256Binary(binary, line.data(), salt.data());
             print_binary(binary, 32);
         }
 
