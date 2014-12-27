@@ -89,12 +89,12 @@ public:
 
     void Init();
 
-    void AddData(const void* ptr, SHA256_DWORD len);
+    void AddData(const void* ptr, size_t len);
 
     template <typename T_ITER>
     void AddData(T_ITER begin_, T_ITER end_) {
         std::size_t len = std::distance(begin_, end_) * sizeof(*begin_);
-        AddData(&*begin_, static_cast<SHA256_DWORD>(len));
+        AddData(&*begin_, len);
     }
 
     void GetHashBinary(void* p32bytes);
@@ -119,7 +119,7 @@ protected:
 // MzcGetSha256Binary and MzcGetSha256HexString
 
 inline void MzcGetSha256Binary(
-    void *p32bytes, const void *ptr, SHA256_DWORD len,
+    void *p32bytes, const void *ptr, size_t len,
     const char *salt = "")
 {
     assert(ptr || len == 0);
@@ -137,7 +137,7 @@ inline void MzcGetSha256Binary(
 
 template <typename T_STRING>
 inline void MzcGetSha256HexString(
-    T_STRING& str, const void *ptr, SHA256_DWORD len,
+    T_STRING& str, const void *ptr, size_t len,
     const char *salt = "")
 {
     assert(ptr || len == 0);
@@ -163,7 +163,7 @@ MzcGetSha256HexString(
 {
     using namespace std;
     assert(psz);
-    SHA256_DWORD len = static_cast<SHA256_DWORD>(strlen(psz));
+    size_t len = strlen(psz);
     MSha256 sha256(salt);
     sha256.AddData(salt, strlen(salt));
     sha256.AddData(psz, len);

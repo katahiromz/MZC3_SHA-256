@@ -113,9 +113,10 @@ void MSha256::UpdateTable() {
     }
 }
 
-void MSha256::AddData(const void* ptr, SHA256_DWORD len) {
+void MSha256::AddData(const void* ptr, size_t len) {
     using namespace std;
     assert(ptr || len == 0);
+	SHA256_DWORD dwLen = static_cast<SHA256_DWORD>(len);
 
     const SHA256_BYTE *pb = reinterpret_cast<const SHA256_BYTE *>(ptr);
 
@@ -123,14 +124,14 @@ push_top:
     SHA256_DWORD index = 0;
     SHA256_DWORD t_4;
 
-    for (t_4 = m_iw; (m_iw % 4) != 0 && index < len; ++t_4) {
+    for (t_4 = m_iw; (m_iw % 4) != 0 && index < dwLen; ++t_4) {
         m_w[t_4 / 4] |= pb[index] << (24 - (t_4 % 4) * 8);
         ++index;
     }
     m_iw = t_4;
 
     SHA256_DWORD t;
-    for (t = m_iw / 4; t < 16 && index + 3 < len; ++t) {
+    for (t = m_iw / 4; t < 16 && index + 3 < dwLen; ++t) {
         m_w[t] |= (pb[index] << 24) |
                   (pb[index + 1] << 16) |
                   (pb[index + 2] << 8) |
@@ -138,7 +139,7 @@ push_top:
         index += 4;
     }
 
-    for (t_4 = t * 4; t_4 < 64 && index < len; ++t_4) {
+    for (t_4 = t * 4; t_4 < 64 && index < dwLen; ++t_4) {
         m_w[t_4 / 4] |= pb[index++] << (24 - (t_4 % 4) * 8);
     }
     m_iw = t_4;
@@ -153,14 +154,14 @@ push_top:
         m_iw = 0;
         memset(m_w, 0, 256);
         m_len += index * 8;
-        if (index < len) {
+        if (index < dwLen) {
             pb += index;
-            len -= index;
+            dwLen -= index;
             goto push_top;
         }
     }
     else {
-        m_len += len * 8;
+        m_len += dwLen * 8;
     }
 }
 
