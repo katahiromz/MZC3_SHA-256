@@ -213,10 +213,10 @@ void MSha256::GetHashBinary(void *p32bytes) {
 
     void print_binary(const void *p, size_t size) {
         static const char *s_hex = "0123456789abcdef";
-        const BYTE *pb = reinterpret_cast<const BYTE *>(p);
+        const unsigned char *pb = reinterpret_cast<const unsigned char *>(p);
         std::cout << "{";
         while (size--) {
-            BYTE b = *pb;
+            unsigned char b = *pb;
             std::cout << "0x" << s_hex[b >> 4] << s_hex[b & 0xF] << ", ";
             ++pb;
         }
